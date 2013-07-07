@@ -2,14 +2,16 @@ package revmgo
 
 import (
 	"errors"
+	"fmt"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 )
 
 var (
-	Session *mgo.Session // Global mgo Session
-	Dial    string       // http://godoc.org/labix.org/v2/mgo#Dial
-	Method  string       // clone, copy, new http://godoc.org/labix.org/v2/mgo#Session.New
+	Session  *mgo.Session // Global mgo Session
+	Dial     string       // http://godoc.org/labix.org/v2/mgo#Dial
+	Method   string       // clone, copy, new http://godoc.org/labix.org/v2/mgo#Session.New
+	Database string       // (optional) database name to connect to
 )
 
 func AppInit() {
@@ -21,6 +23,12 @@ func AppInit() {
 	}
 	if Method, found = revel.Config.String("db.spec"); !found {
 		Method = "clone"
+	} else if err := MethodError(Method); err != nil {
+		revel.ERROR.Panic(err)
+	}
+	if Database, found = revel.Config.String("db.name"); !found {
+		fmt.Println("not found!")
+		Database = ""
 	} else if err := MethodError(Method); err != nil {
 		revel.ERROR.Panic(err)
 	}
@@ -41,11 +49,13 @@ func ControllerInit() {
 
 type MongoController struct {
 	*revel.Controller
-	MongoSession *mgo.Session // named MongoSession to avoid collision with revel.Session
+	MongoSession *mgo.Session  // named MongoSession to avoid collision with revel.Session
+	Database     *mgo.Database // shortcut to the database you want to connect to by default
 }
 
-// Connect to mgo if we haven't already and return a copy/new/clone of the session
+// Connect to mgo if we haven't already and return a copy/new/clone of the session and database connection
 func (c *MongoController) Begin() revel.Result {
+	fmt.Println("begin!")
 	switch Method {
 	case "clone":
 		c.MongoSession = Session.Clone()
@@ -54,6 +64,9 @@ func (c *MongoController) Begin() revel.Result {
 	case "new":
 		c.MongoSession = Session.New()
 	}
+	fmt.Println("Connecting to database...")
+	c.Database = c.MongoSession.DB(Database)
+
 	return nil
 }
 

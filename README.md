@@ -9,7 +9,7 @@ mgo module for revel framework
 
 Add the following line to your app.conf.
 
-    module.revmgo = github.com/jgraham909/revmgo
+    module.revmgo = github.com/hermanschaaf/revmgo
 
 Additional settings can be configured via the following directives
 
@@ -26,7 +26,19 @@ This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.
 
 Then in your init.go include the following
 
-    revel.OnAppStart(revmgo.Init)
+    revel.OnAppStart(revmgo.AppInit)
+
+### Adding the interceptors
+
+You will also need to add the interceptors in a init.go file within the `controllers` directory:
+
+    package controllers
+
+    import "github.com/hermanschaaf/revmgo"
+
+    func init() {
+        revmgo.ControllerInit()
+    }
 
 ### Embedding the controller
 
@@ -35,7 +47,7 @@ MongoController.
 
 Add the following import line in source files that will embed MongoController.
 
-     "github.com/jgraham909/revmgo"
+     "github.com/hermanschaaf/revmgo"
 
 Embed the MongoController on your custom controller;
 
@@ -52,4 +64,4 @@ to query your mongo datastore.
 ### See Also
 
 *  http://labix.org/v2/mgo for documentation on the mgo driver
-*  https://github.com/jgraham909/bloggo for a reference implementation (Still a work in progress)
+*  https://github.com/hermanschaaf/ironzebra for a reference implementation (Still a work in progress)
