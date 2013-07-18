@@ -2,7 +2,6 @@ package revmgo
 
 import (
 	"errors"
-	"fmt"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 )
@@ -27,7 +26,6 @@ func AppInit() {
 		revel.ERROR.Panic(err)
 	}
 	if Database, found = revel.Config.String("db.name"); !found {
-		fmt.Println("not found!")
 		Database = ""
 	} else if err := MethodError(Method); err != nil {
 		revel.ERROR.Panic(err)
@@ -55,7 +53,6 @@ type MongoController struct {
 
 // Connect to mgo if we haven't already and return a copy/new/clone of the session and database connection
 func (c *MongoController) Begin() revel.Result {
-	fmt.Println("begin!")
 	switch Method {
 	case "clone":
 		c.MongoSession = Session.Clone()
@@ -64,8 +61,9 @@ func (c *MongoController) Begin() revel.Result {
 	case "new":
 		c.MongoSession = Session.New()
 	}
-	fmt.Println("Connecting to database...")
-	c.Database = c.MongoSession.DB(Database)
+	if Database != "" {
+		c.Database = c.MongoSession.DB(Database)
+	}
 
 	return nil
 }
