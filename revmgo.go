@@ -33,6 +33,9 @@ func AppInit() {
 
 	var err error
 	if Session == nil {
+		fmt.Println("dial: " + revel.Config.String("revmgo.dial"))
+		fmt.Println("spec: " + revel.Config.String("db.spec"))
+		fmt.Println("name: " + revel.Config.String("db.name"))
 		// Read configuration.
 		if Session, err = mgo.Dial(Dial); err != nil {
 			revel.ERROR.Panic(err)
