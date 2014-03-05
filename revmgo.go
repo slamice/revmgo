@@ -31,6 +31,10 @@ func AppInit() {
 		revel.ERROR.Panic(err)
 	}
 
+    revel.ERROR.Print("revmgo.dial")
+    revel.ERROR.Print("db.spec")
+    revel.ERROR.Print("db.name")
+
 	var err error
 	if Session == nil {
 		// Read configuration.
