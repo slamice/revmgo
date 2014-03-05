@@ -31,8 +31,6 @@ func AppInit() {
 		revel.ERROR.Panic(err)
 	}
 
-    
-
 	var err error
 	if Session == nil {
 		// Read configuration.
